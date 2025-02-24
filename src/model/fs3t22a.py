@@ -34,9 +34,11 @@ class FS3T22A(Siren):
     def _on_attack(self):
         while True:
             self._motor.on()
-            self._wait_for_cancel(4)
+            if self._wait_for_cancel(4):
+                break
             self._motor.off()
-            self._wait_for_cancel(4)
+            if self._wait_for_cancel(4):
+                break
         self._off()
 
     def _off(self):
