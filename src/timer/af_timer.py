@@ -38,7 +38,7 @@ class AFTimer:
                 MOTOR_GPIO,
                 HIGH_SOLENOID_GPIO,
                 LOW_SOLENOID_GPIO,
-                srlf._cancel_lock,
+                self._cancel_lock,
                 self._cancel_cond)
 
         self._led_ready.on()
