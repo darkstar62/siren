@@ -51,16 +51,16 @@ class AFTimer:
         self._thread.start()
 
     def test(self):
-        self._run_in_thread(self._siren.on_test)
+        self._run_in_thread(self._siren._on_test)
 
     def alert(self):
-        self._run_in_thread(self._siren.on_alert)
+        self._run_in_thread(self._siren._on_alert)
 
     def fire(self):
-        self._run_in_thread(self._siren.on_fire)
+        self._run_in_thread(self._siren._on_fire)
 
     def attack(self):
-        self._run_in_thread(self._siren.on_attack)
+        self._run_in_thread(self._siren._on_attack)
 
     def cancel(self):
         with self._cancel_lock:
