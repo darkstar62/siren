@@ -1,7 +1,7 @@
 """ Implementation of the AF timer. """
 
-from . import *
-from test.fake_gpiozero import Button, LED
+from config import *
+from gpiozero import Button, LED
 import threading
 
 class AFTimer:

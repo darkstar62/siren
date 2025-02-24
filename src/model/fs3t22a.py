@@ -1,6 +1,6 @@
 """ Implements AF timer controls for the Federal Signal 3T22A. """
 
-from test.fake_gpiozero import LED
+from gpiozero import LED
 from siren import Motor, Siren, Solenoid
 
 class FS3T22A(Siren):
