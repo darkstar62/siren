@@ -5,6 +5,10 @@ from . import LED_ALARM
 
 
 class Siren:
+    def __init__(self, cancel_lock, cancel_cond):
+        self._cancel_cond = cancel_cond
+        self._cancel_lock = cancel_lock
+
     def _on_test(self):
         pass
 

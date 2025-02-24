@@ -4,7 +4,8 @@ from gpiozero import LED
 from siren import Motor, Siren, Solenoid
 
 class FS3T22A(Siren):
-    def __init__(self, motor_gpio, high_gpio, low_gpio):
+    def __init__(self, motor_gpio, high_gpio, low_gpio, lock, cond):
+        super.__init__(lock, cond)
         self._motor = Motor(LED(motor_gpio))
         self._top_sol = Solenoid(LED(high_gpio))
         self._bottom_sol = Solenoid(LED(low_gpio))

@@ -6,8 +6,6 @@ import threading
 
 class AFTimer:
     def __init__(self, siren_cls):
-        self._siren = siren_cls(MOTOR_GPIO, HIGH_SOLENOID_GPIO, LOW_SOLENOID_GPIO)
-
         self._led_alarm = LED(ALERT_LED_GPIO)
         self._led_ready = LED(READY_LED_GPIO)
 
@@ -34,7 +32,14 @@ class AFTimer:
 
         self._thread = None
         self._cancel_lock = threading.Lock()
-        self._cancel_cond = threading.Condition
+        self._cancel_cond = threading.Condition(self._cancel_lock)
+
+        self._siren = siren_cls(
+                MOTOR_GPIO,
+                HIGH_SOLENOID_GPIO,
+                LOW_SOLENOID_GPIO,
+                srlf._cancel_lock,
+                self._cancel_cond)
 
         self._led_ready.on()
         self._led_alarm.off()
