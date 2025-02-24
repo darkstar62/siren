@@ -7,15 +7,15 @@ import threading
 class AFTimer:
     def __init__(self, siren_cls):
         self._siren = siren_cls(MOTOR_GPIO, HIGH_SOLENOID_GPIO, LOW_SOLENOID_GPIO)
-        
+
         self._led_alarm = LED(ALERT_LED_GPIO)
         self._led_ready = LED(READY_LED_GPIO)
-        
+
         self._test_button = Button(TEST_BUTTON_GPIO)
         self._test_button.pin.bounce = 0.05
         self._test_button.when_pressed = self.test
         self._test_button.when_released = self.cancel
-        
+
         self._alert_button = Button(ALERT_BUTTON_GPIO)
         self._alert_button.pin.bounce = 0.05
         self._alert_button.when_pressed = self.alert
@@ -35,13 +35,13 @@ class AFTimer:
         self._thread = None
         self._cancel_lock = threading.Lock()
         self._cancel_cond = threading.Condition
-        
+
         self._led_ready.on()
         self._led_alarm.off()
 
     def _run_in_thread(self, callable):
         self.cancel()
-        
+
         def wrapper():
             self._led_alarm.on()
             callable()
@@ -49,19 +49,19 @@ class AFTimer:
 
         self._thread = threading.Thread(target=wrapper)
         self._thread.start()
-        
+
     def test(self):
-        self._run_in_thread(self.siren.on_test)
+        self._run_in_thread(self._siren.on_test)
 
     def alert(self):
-        self._run_in_thread(self.siren.on_alert)
+        self._run_in_thread(self._siren.on_alert)
 
     def fire(self):
-        self._run_in_thread(self.siren.on_fire)
+        self._run_in_thread(self._siren.on_fire)
 
     def attack(self):
-        self._run_in_thread(self.siren.on_attack)
-        
+        self._run_in_thread(self._siren.on_attack)
+
     def cancel(self):
         with self._cancel_lock:
             print("Cancelling")
