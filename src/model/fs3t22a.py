@@ -4,6 +4,13 @@ from gpiozero import LED
 from siren import Motor, Siren, Solenoid
 
 class FS3T22A(Siren):
+    """ Implements the various signalling modes for a Federal Signal 3T22A.
+    
+    This siren has a motor that controls two rotors, a high and a low.  It additionally
+    has two independently addressable solenoid-controlled flaps on the intakes to allow
+    for a high-low or muted operation.
+    """
+
     def __init__(self, motor_gpio, high_gpio, low_gpio, lock, cond):
         super(FS3T22A, self).__init__(lock, cond)
         self._motor = Motor(LED(motor_gpio))

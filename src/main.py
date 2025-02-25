@@ -8,6 +8,6 @@ if __name__ == "__main__":
     import time
 
     af_timer = AFTimer(FS3T22A)
-    
+
     while True:
         time.sleep(1)

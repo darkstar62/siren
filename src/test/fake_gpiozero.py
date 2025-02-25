@@ -8,7 +8,7 @@ class LED:
     def __init__(self, gpio):
         self.gpio = gpio
         self.pin = Pin()
-    
+
     def on(self):
         pass
 
@@ -26,7 +26,7 @@ class Button:
     def press(self):
         self.hold()
         self.release()
-    
+
     def hold(self):
         if self.when_pressed is not None:
             self.when_pressed()
