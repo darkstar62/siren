@@ -28,19 +28,24 @@ class Siren:
 
     def _on_test(self):
         """ Called when the "Test" button is pressed. """
-        pass
 
     def _on_alert(self):
         """ Called when the "Alert" button is pressed. """
-        pass
 
     def _on_fire(self):
         """ Called when the "Fire" button is pressed. """
-        pass
+
+    def _on_fire_attack(self):
+        """ Called when the "Fire" and "Attack" buttons are pressed. """
 
     def _on_attack(self):
         """ Called when the "Attack" button is pressed. """
-        pass
+
+    def _set_damper_high(self, closed):
+        """ Close the high damper if `closed` is set. """
+
+    def _set_damper_low(self, closed):
+        """ Close the low damper if `closed` is set. """
 
     def _wait_for_cancel(self, timeout=None):
         """ A utility function that implementations can use to interruptably sleep.

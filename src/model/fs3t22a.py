@@ -38,6 +38,30 @@ class FS3T22A(Siren):
                 break
         self._off()
 
+    def _on_fire_attack(self):
+        motor_next = True
+        cancelled = False
+        while not cancelled:
+            if motor_next:
+                self._motor.on()
+                motor_next = False
+            else:
+                self._motor.off()
+                motor_next = True
+
+            for secs in range(4):
+                self._top_sol.off()
+                self._bottom_sol.on()
+                if self._wait_for_cancel(0.5):
+                    cancelled = True
+                    break
+                self._bottom_sol.off()
+                self._top_sol.on()
+                if self._wait_for_cancel(0.5):
+                    cancelled = True
+                    break
+        self._off()
+            
     def _on_attack(self):
         while True:
             self._motor.on()
@@ -47,6 +71,18 @@ class FS3T22A(Siren):
             if self._wait_for_cancel(4):
                 break
         self._off()
+
+    def _set_damper_high(self, closed):
+        if closed:
+            self._top_sol.on()
+        else:
+            self._top_sol.off()
+
+    def _set_damper_low(self, closed):
+        if closed:
+            self._bottom_sol.on()
+        else:
+            self._bottom_sol.off()
 
     def _off(self):
         self._motor.off()
