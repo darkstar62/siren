@@ -10,6 +10,20 @@ import sys
 import threading
 import time
 
+
+def dump_trace():
+    """ Utility function to dump the trace of all active threads. """
+    import faulthandler
+    FILE = '/tmp/trace.log'
+    f = open(FILE, 'w')
+    faulthandler.dump_traceback(file=f)
+    f.close()
+    f = open(FILE, 'r')
+    data = f.read()
+    f.close()
+    print(data)
+
+
 class OutputCapture(io.StringIO):
     """ Interceptor for stdout or stderr to redirect to a socket. """
 
@@ -43,6 +57,8 @@ class Console:
                     console.
         """
 
+        locals['dump_trace'] = dump_trace
+    
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR,1)
 

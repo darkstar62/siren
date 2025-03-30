@@ -10,7 +10,7 @@ PORT = 12345
 
 if __name__ == "__main__":
     from model.fs3t22a import FS3T22A
-    from timer.af_timer import AFTimer
+    from timer.af_timer import AFTimer, Mode, Button
     import time
 
     af_timer = AFTimer(FS3T22A)
@@ -26,6 +26,8 @@ if __name__ == "__main__":
         'attack': af_timer.attack,
         'fire_attack': af_timer.fire_attack,
         'cancel': af_timer.cancel,
+        'Mode': Mode,
+        'Button': Button,
     }
     while True:
         console.run_server(locals=locals)
