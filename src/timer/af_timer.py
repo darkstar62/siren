@@ -25,7 +25,7 @@ class Button:
 class AFTimer:
     def __init__(self, siren_cls):
         self._mode = Mode.IDLE
-    
+
         self._led_alarm = gpiozero.LED(ALERT_LED_GPIO)
         self._led_ready = gpiozero.LED(READY_LED_GPIO)
 
@@ -72,13 +72,16 @@ class AFTimer:
 
     def _button_released(self, button):
         self._button_push_lock.acquire()
-        if self._mode == Mode.TEST:
+        if self._mode == Mode.TEST or (
+                self._mode == Mode.IDLE and self._cancel_button.is_pressed):
             if button == Button.ALERT:
                 self._siren._set_damper_low(False)
             elif button == Button.FIRE:
                 self._siren._set_damper_high(False)
             elif button == Button.TEST:
                 self.change_mode(Mode.IDLE)
+        elif button == Button.CANCEL:
+            self.change_mode(Mode.IDLE)
         self._button_push_lock.release()
 
     def _button_pressed(self, button):
@@ -103,7 +106,8 @@ class AFTimer:
         #        Damper opens when Fire released; siren turns off when Test released.
         #  - Alert + Fire: When pressed, activate fire alert mode.  Remains on when released.
         #  - Cancel: Turn off all remain-on modes and move to idle.
-        if self._mode == Mode.TEST and self._test_button.is_pressed:
+        if (self._mode == Mode.TEST and self._test_button.is_pressed) or (
+                self._mode == Mode.IDLE and self._cancel_button.is_pressed):
             # Two additional buttons are allowed, and don't change modes, but do change what
             # the siren does.
             if button == Button.ALERT:
@@ -135,7 +139,7 @@ class AFTimer:
                 self.change_mode(Mode.ATTACK)
             elif button == Button.CANCEL:
                 self.change_mode(Mode.IDLE)
-                
+
         self._button_push_lock.release()
 
     def _run_in_thread(self, callable):
