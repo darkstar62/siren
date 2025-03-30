@@ -28,6 +28,7 @@ class Solenoid:
                     if self._cancel_cond.wait(1):
                         break
             self._relay.off()
+            self._thread = None
 
         if self._thread is None:
             self._thread = threading.Thread(target=watchdog)

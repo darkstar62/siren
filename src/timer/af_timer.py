@@ -156,7 +156,7 @@ class AFTimer:
 
     def change_mode(self, mode):
         """ Change to the specified mode, actuating the siren accordingly. """
-        print("Change mode: %d", mode)
+        print("Change mode: ", mode, " from ", self._mode)
         if mode == Mode.IDLE:
             self.cancel()
         elif mode == Mode.ALERT:
@@ -169,22 +169,29 @@ class AFTimer:
             self.attack()
         elif mode == Mode.TEST:
             self.test()
-        self._mode = mode
+        else:
+            print("Invalid mode: ", mode)
+        print("Mode now ", self._mode)
 
     def test(self):
         self._run_in_thread(self._siren._on_test)
+        self._mode = Mode.TEST
 
     def alert(self):
         self._run_in_thread(self._siren._on_alert)
+        self._mode = Mode.ALERT
 
     def fire(self):
         self._run_in_thread(self._siren._on_fire)
+        self._mode = Mode.FIRE
 
     def attack(self):
         self._run_in_thread(self._siren._on_attack)
+        self._mode = Mode.ATTACK
 
     def fire_attack(self):
         self._run_in_thread(self._siren._on_fire_attack)
+        self._mode = Mode.FIRE_ATTACK
 
     def cancel(self):
         with self._cancel_lock:
@@ -195,3 +202,4 @@ class AFTimer:
             self._thread.join()
             print("cancelled")
             self._thread = None
+        self._mode = Mode.IDLE
