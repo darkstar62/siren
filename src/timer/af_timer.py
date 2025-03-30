@@ -13,6 +13,52 @@ class Mode:
     ATTACK = 4
     FIRE_ATTACK = 5
     OFF_TEST = 6
+    
+    def __init__(self, mode):
+        self._mode = mode
+
+    def __repr__(self):
+        mapping = {
+            self.IDLE : 'IDLE',
+            self.TEST : 'TEST',
+            self.ALERT : 'ALERT',
+            self.FIRE : 'FIRE',
+            self.ATTACK : 'ATTACK',
+            self.FIRE_ATTACK : 'FIRE_ATTACK',
+            self.OFF_TEST : 'OFF_TEST'
+        }
+        return '<Mode "%s">' % mapping[self._mode]
+    
+    def __eq__(self, o):
+        return isinstance(o, self.__class__) and self._mode == o._mode
+
+    @classmethod
+    def idle(cls):
+        return Mode(cls.IDLE)
+    
+    @classmethod
+    def test(cls):
+        return Mode(cls.TEST)
+
+    @classmethod
+    def alert(cls):
+        return Mode(cls.ALERT)
+
+    @classmethod
+    def fire(cls):
+        return Mode(cls.FIRE)
+    
+    @classmethod
+    def attack(cls):
+        return Mode(cls.ATTACK)
+    
+    @classmethod
+    def fire_attack(cls):
+        return Mode(cls.FIRE_ATTACK)
+
+    @classmethod
+    def off_test(cls):
+        return Mode(cls.OFF_TEST)
 
 
 class Button:
@@ -25,7 +71,7 @@ class Button:
 
 class AFTimer:
     def __init__(self, siren_cls):
-        self._mode = Mode.IDLE
+        self._mode = Mode.idle()
 
         self._led_alarm = gpiozero.LED(ALERT_LED_GPIO)
         self._led_ready = gpiozero.LED(READY_LED_GPIO)
@@ -97,16 +143,16 @@ class AFTimer:
                 self.change_mode(Mode.IDLE)
                 return
 
-            if self._mode == Mode.TEST and button == Button.TEST:
+            if self._mode == Mode.test() and button == Button.TEST:
                 self.change_mode(Mode.IDLE)
-            elif self._mode == Mode.TEST or (
-                    self._mode == Mode.OFF_TEST and Button.CANCEL in pressed):
+            elif self._mode == Mode.test() or (
+                    self._mode == Mode.off_test() and Button.CANCEL in pressed):
                 if button == Button.ALERT:
                     self._siren._set_damper_low(False)
                 elif button == Button.FIRE:
                     self._siren._set_damper_high(False)
             elif button == Button.CANCEL:
-                self.change_mode(Mode.IDLE)
+                self.change_mode(Mode.idle())
 
     def _button_pressed(self, button):
         """ Called whenever a button push event is called.
@@ -130,8 +176,8 @@ class AFTimer:
             #  - Alert + Fire: When pressed, activate fire alert mode.  Remains on when released.
             #  - Cancel: Turn off all remain-on modes and move to idle.
             pressed = self._get_buttons_pushed()
-            if (self._mode == Mode.TEST and Button.TEST in pressed) or (
-                    self._mode == Mode.OFF_TEST and Button.CANCEL in pressed):
+            if (self._mode == Mode.test() and Button.TEST in pressed) or (
+                    self._mode == Mode.off_test() and Button.CANCEL in pressed):
                 # Two additional buttons are allowed, and don't change modes, but do change what
                 # the siren does.
                 if button == Button.ALERT:
@@ -139,30 +185,30 @@ class AFTimer:
                 elif button == Button.FIRE:
                     self._siren._set_damper_high(True)
 
-            elif self._mode == Mode.ATTACK and Button.ATTACK in pressed:
+            elif self._mode == Mode.attack() and Button.ATTACK in pressed:
                 if button == Button.FIRE:
                     self.change_mode(Mode.FIRE_ATTACK)
 
-            elif self._mode == Mode.FIRE and Button.FIRE in pressed:
+            elif self._mode == Mode.fire() and Button.FIRE in pressed:
                 if button == Button.ATTACK:
                     self.change_mode(Mode.FIRE_ATTACK)
 
-            elif self._mode == Mode.ALERT and Button.ALERT in pressed:
+            elif self._mode == Mode.alert() and Button.ALERT in pressed:
                 pass
-            elif self._mode == Mode.FIRE_ATTACK and Button.FIRE in pressed and Button.ATTACK in pressed:
+            elif self._mode == Mode.fire_attack() and Button.FIRE in pressed and Button.ATTACK in pressed:
                 pass
             else:
                 # From here, we got a single button push, meaning there's a first-level mode switch.
                 if button == Button.TEST:
-                    self.change_mode(Mode.TEST)
+                    self.change_mode(Mode.test())
                 elif button == Button.ALERT:
-                    self.change_mode(Mode.ALERT)
+                    self.change_mode(Mode.alert())
                 elif button == Button.FIRE:
-                    self.change_mode(Mode.FIRE)
+                    self.change_mode(Mode.fire())
                 elif button == Button.ATTACK:
-                    self.change_mode(Mode.ATTACK)
+                    self.change_mode(Mode.attack())
                 elif button == Button.CANCEL:
-                    self.change_mode(Mode.OFF_TEST)
+                    self.change_mode(Mode.off_test())
 
     def _run_in_thread(self, callable):
         self.cancel()
@@ -179,19 +225,19 @@ class AFTimer:
     def change_mode(self, mode):
         """ Change to the specified mode, actuating the siren accordingly. """
         print("Change mode: ", mode, " from ", self._mode)
-        if mode == Mode.IDLE:
+        if mode == Mode.idle():
             self.cancel()
-        elif mode == Mode.OFF_TEST:
-            self.cancel(Mode.OFF_TEST)
-        elif mode == Mode.ALERT:
+        elif mode == Mode.off_test():
+            self.cancel(Mode.off_test())
+        elif mode == Mode.alert():
             self.alert()
-        elif mode == Mode.FIRE:
+        elif mode == Mode.fire():
             self.fire()
-        elif mode == Mode.FIRE_ATTACK:
+        elif mode == Mode.fire_attack():
             self.fire_attack()
-        elif mode == Mode.ATTACK:
+        elif mode == Mode.attack():
             self.attack()
-        elif mode == Mode.TEST:
+        elif mode == Mode.test():
             self.test()
         else:
             print("Invalid mode: ", mode)
@@ -199,23 +245,23 @@ class AFTimer:
 
     def test(self):
         self._run_in_thread(self._siren._on_test)
-        self._mode = Mode.TEST
+        self._mode = Mode.test()
 
     def alert(self):
         self._run_in_thread(self._siren._on_alert)
-        self._mode = Mode.ALERT
+        self._mode = Mode.alert()
 
     def fire(self):
         self._run_in_thread(self._siren._on_fire)
-        self._mode = Mode.FIRE
+        self._mode = Mode.fire()
 
     def attack(self):
         self._run_in_thread(self._siren._on_attack)
-        self._mode = Mode.ATTACK
+        self._mode = Mode.attack()
 
     def fire_attack(self):
         self._run_in_thread(self._siren._on_fire_attack)
-        self._mode = Mode.FIRE_ATTACK
+        self._mode = Mode.fire_attack()
 
     def cancel(self, mode=None):
         with self._cancel_lock:
@@ -226,4 +272,4 @@ class AFTimer:
             self._thread.join()
             print("cancelled")
             self._thread = None
-        self._mode = mode or Mode.IDLE
+        self._mode = mode or Mode.idle()
