@@ -7,7 +7,7 @@ from . import LED_ALARM
 class Siren:
     """
     Interface for implementing a siren to be driven by the AF 11 timer.
-    
+
     The AF timer implemented by this software has five buttons: Test,
     Alert, Fire, Attack, and Cancel.  Depending on the siren attached,
     some of these buttons may or may not have a function,  For example,
@@ -17,7 +17,7 @@ class Siren:
     Each siren implementation is expected to derive from this class and
     implement whatever functionality makes sense.  The mode of operation
     of the siren can be customized as well.
-    
+
     Note that each event function is called in a thread that can be
     cancelled.  To detect cancellation, use the `_wait_for_cancel` function.
     """

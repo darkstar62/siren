@@ -5,7 +5,7 @@ from siren import Motor, Siren, Solenoid
 
 class FS3T22A(Siren):
     """ Implements the various signalling modes for a Federal Signal 3T22A.
-    
+
     This siren has a motor that controls two rotors, a high and a low.  It additionally
     has two independently addressable solenoid-controlled flaps on the intakes to allow
     for a high-low or muted operation.
@@ -61,7 +61,7 @@ class FS3T22A(Siren):
                     cancelled = True
                     break
         self._off()
-            
+
     def _on_attack(self):
         while True:
             self._motor.on()
