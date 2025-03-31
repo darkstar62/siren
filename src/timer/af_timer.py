@@ -140,11 +140,11 @@ class AFTimer:
             pressed = self._get_buttons_pushed()
             if button == Button.CANCEL and len(pressed) == 0:
                 # The cancel button was just released, and now no buttons are pressed.
-                self.change_mode(Mode.IDLE)
+                self.change_mode(Mode.idle())
                 return
 
             if self._mode == Mode.test() and button == Button.TEST:
-                self.change_mode(Mode.IDLE)
+                self.change_mode(Mode.idle())
             elif self._mode == Mode.test() or (
                     self._mode == Mode.off_test() and Button.CANCEL in pressed):
                 if button == Button.ALERT:
@@ -187,11 +187,11 @@ class AFTimer:
 
             elif self._mode == Mode.attack() and Button.ATTACK in pressed:
                 if button == Button.FIRE:
-                    self.change_mode(Mode.FIRE_ATTACK)
+                    self.change_mode(Mode.fire_attack())
 
             elif self._mode == Mode.fire() and Button.FIRE in pressed:
                 if button == Button.ATTACK:
-                    self.change_mode(Mode.FIRE_ATTACK)
+                    self.change_mode(Mode.fire_attack())
 
             elif self._mode == Mode.alert() and Button.ALERT in pressed:
                 pass
@@ -222,7 +222,7 @@ class AFTimer:
         self._thread = threading.Thread(target=wrapper)
         self._thread.start()
 
-    def change_mode(self, mode):
+    def change_mode(self, mode: Mode):
         """ Change to the specified mode, actuating the siren accordingly. """
         print("Change mode: ", mode, " from ", self._mode)
         if mode == Mode.idle():
