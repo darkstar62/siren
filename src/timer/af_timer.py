@@ -1,7 +1,10 @@
 """ Implementation of the AF timer. """
 
+try:
+    from gpiozero import LED, Button as GPIOButton
+except:
+    from test.fake_gpiozero import LED, Button as GPIOButton
 from config import *
-import gpiozero
 import functools
 import threading
 
@@ -73,30 +76,30 @@ class AFTimer:
     def __init__(self, siren_cls):
         self._mode = Mode.idle()
 
-        self._led_alarm = gpiozero.LED(ALERT_LED_GPIO)
-        self._led_ready = gpiozero.LED(READY_LED_GPIO)
+        self._led_alarm = LED(ALERT_LED_GPIO)
+        self._led_ready = LED(READY_LED_GPIO)
 
-        self._test_button = gpiozero.Button(TEST_BUTTON_GPIO)
+        self._test_button = GPIOButton(TEST_BUTTON_GPIO)
         self._test_button.pin.bounce = 0.05
         self._test_button.when_pressed = functools.partial(self._button_pressed, Button.TEST)
         self._test_button.when_released = functools.partial(self._button_released, Button.TEST)
 
-        self._alert_button = gpiozero.Button(ALERT_BUTTON_GPIO)
+        self._alert_button = GPIOButton(ALERT_BUTTON_GPIO)
         self._alert_button.pin.bounce = 0.05
         self._alert_button.when_pressed = functools.partial(self._button_pressed, Button.ALERT)
         self._alert_button.when_released = functools.partial(self._button_released, Button.ALERT)
 
-        self._fire_button = gpiozero.Button(FIRE_BUTTON_GPIO)
+        self._fire_button = GPIOButton(FIRE_BUTTON_GPIO)
         self._fire_button.pin.bounce = 0.05
         self._fire_button.when_pressed = functools.partial(self._button_pressed, Button.FIRE)
         self._fire_button.when_released = functools.partial(self._button_released, Button.FIRE)
 
-        self._attack_button = gpiozero.Button(ATTACK_BUTTON_GPIO)
+        self._attack_button = GPIOButton(ATTACK_BUTTON_GPIO)
         self._attack_button.pin.bounce = 0.05
         self._attack_button.when_pressed = functools.partial(self._button_pressed, Button.ATTACK)
         self._attack_button.when_released = functools.partial(self._button_released, Button.ATTACK)
 
-        self._cancel_button = gpiozero.Button(CANCEL_BUTTON_GPIO)
+        self._cancel_button = GPIOButton(CANCEL_BUTTON_GPIO)
         self._cancel_button.pin.bounce = 0.05
         self._cancel_button.when_pressed = functools.partial(self._button_pressed, Button.CANCEL)
         self._cancel_button.when_released = functools.partial(self._button_released, Button.CANCEL)
