@@ -31,6 +31,8 @@ if __name__ == "__main__":
         'attack': af_timer.attack,
         'fire_attack': af_timer.fire_attack,
         'cancel': af_timer.cancel,
+        'lock': af_timer.lock,
+        'unlock': af_timer.unlock,
         'Mode': Mode,
         'Button': Button,
     }

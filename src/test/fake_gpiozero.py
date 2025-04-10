@@ -4,16 +4,25 @@ class Pin:
     def __init__(self):
         self.bounce = None
 
+
 class LED:
     def __init__(self, gpio):
         self.gpio = gpio
         self.pin = Pin()
+        self._on = False
+        
+    def __repr__(self):
+        return '<LED %d: %s>' % (
+            self.gpio,
+            self._on and 'on' or 'off'
+        )
 
     def on(self):
-        pass
+        self._on = True
 
     def off(self):
-        pass
+        self._on = False
+
 
 class Button:
     def __init__(self, gpio):

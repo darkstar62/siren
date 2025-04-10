@@ -16,6 +16,7 @@ class Mode:
     ATTACK = 4
     FIRE_ATTACK = 5
     OFF_TEST = 6
+    LOCKED = 7
     
     def __init__(self, mode):
         self._mode = mode
@@ -28,6 +29,7 @@ class Mode:
             self.FIRE : 'FIRE',
             self.ATTACK : 'ATTACK',
             self.FIRE_ATTACK : 'FIRE_ATTACK',
+            self.LOCKED : 'LOCKED',
             self.OFF_TEST : 'OFF_TEST'
         }
         return '<Mode "%s">' % mapping[self._mode]
@@ -62,6 +64,10 @@ class Mode:
     @classmethod
     def off_test(cls):
         return Mode(cls.OFF_TEST)
+
+    @classmethod
+    def locked(cls):
+        return Mode(cls.LOCKED)
 
 
 class Button:
@@ -140,6 +146,9 @@ class AFTimer:
 
     def _button_released(self, button):
         with self._button_push_lock:
+            if self._mode == Mode.locked():
+                return
+
             pressed = self._get_buttons_pushed()
             if button == Button.CANCEL and len(pressed) == 0:
                 # The cancel button was just released, and now no buttons are pressed.
@@ -178,6 +187,10 @@ class AFTimer:
             #        Damper opens when Fire released; siren turns off when Test released.
             #  - Alert + Fire: When pressed, activate fire alert mode.  Remains on when released.
             #  - Cancel: Turn off all remain-on modes and move to idle.
+            if self._mode == Mode.locked():
+                # The buttons don't work when locked.
+                return
+
             pressed = self._get_buttons_pushed()
             if (self._mode == Mode.test() and Button.TEST in pressed) or (
                     self._mode == Mode.off_test() and Button.CANCEL in pressed):
@@ -242,6 +255,8 @@ class AFTimer:
             self.attack()
         elif mode == Mode.test():
             self.test()
+        elif mode == Mode.locked():
+            self.lock()
         else:
             print("Invalid mode: ", mode)
         print("Mode now ", self._mode)
@@ -275,4 +290,12 @@ class AFTimer:
             self._thread.join()
             print("cancelled")
             self._thread = None
+        self._led_ready.on()
         self._mode = mode or Mode.idle()
+
+    def lock(self):
+        self._led_ready.blink(0.5, 0.5)
+        self._mode = Mode.locked()
+
+    def unlock(self):
+        self.cancel(Mode.idle())
