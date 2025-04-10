@@ -297,6 +297,7 @@ class AFTimer:
         self._mode = mode or Mode.idle()
 
     def lock(self):
+        self.cancel()
         self._led_ready.blink(0.5, 0.5)
         self._mode = Mode.locked()
 
