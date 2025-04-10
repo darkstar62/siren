@@ -20,6 +20,9 @@ class FS3T22A(Siren):
         self._top_sol = Solenoid(LED(high_gpio))
         self._bottom_sol = Solenoid(LED(low_gpio))
 
+    def __repr__(self):
+        return '<FS3T22A: Model Federal Signal 3T22A>'
+
     def _on_test(self):
         self._on_alert()
 

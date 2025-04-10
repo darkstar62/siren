@@ -65,6 +65,8 @@ class Console:
         def thread():
             self._socket.bind((self._host, self._port))
             self._socket.listen()
+            print('Console listening on %s:%d' % (
+                self._host, self._port))
             conn, addr = self._socket.accept()
             orig_stdout = sys.stdout
             orig_stderr = sys.stderr

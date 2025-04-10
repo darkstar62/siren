@@ -1,4 +1,5 @@
 """ Fake class implementing the gpiozero functions used. """
+print("Using fake gpiozero")
 
 class Pin:
     def __init__(self):

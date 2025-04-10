@@ -134,6 +134,9 @@ class AFTimer:
             Button.CANCEL : self._cancel_button,
         }
 
+        print('AF timer configured with siren %s' % self._siren)
+        print('Panel ready.')
+
     def _get_buttons_pushed(self):
         """ Returns a set containing the button that are currently pressed. """
         buttons_pushed = set()
