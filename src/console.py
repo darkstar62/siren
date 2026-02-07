@@ -100,13 +100,12 @@ class Console:
         """ Blocking form of `listen()`. """
         self.listen(locals)
         self._thread.join()
+        print("Console thread returned")
 
     def __del__(self):
         if self._socket:
             self._socket.shutdown(1)
             self._socket.close()
-        if self._thread:
-            self._thread.join()
 
 
 if __name__ == '__main__':

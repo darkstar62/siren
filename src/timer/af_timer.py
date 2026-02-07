@@ -303,3 +303,18 @@ class AFTimer:
 
     def unlock(self):
         self.cancel(Mode.idle())
+        
+    def generate_api_mappings(self):
+        mappings = {
+            'high': self._siren._set_damper_high,
+            'low': self._siren._set_damper_low,
+            'test': functools.partial(self.change_mode, Mode.test()),
+            'alert': functools.partial(self.change_mode, Mode.alert()),
+            'fire': functools.partial(self.change_mode, Mode.fire()),
+            'attack': functools.partial(self.change_mode, Mode.attack()),
+            'fire_attack': functools.partial(self.change_mode, Mode.fire_attack()),
+            'cancel': functools.partial(self.change_mode, Mode.idle()),
+            'lock': functools.partial(self.change_mode, Mode.locked()),
+            'unlock': functools.partial(self.change_mode, Mode.idle()),
+        }
+        return mappings
