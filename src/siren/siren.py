@@ -26,7 +26,7 @@ class Siren:
         self._cancel_cond = cancel_cond
         self._cancel_lock = cancel_lock
 
-    def _on_test(self):
+    def _on_test(self, duration=None):
         """ Called when the "Test" button is pressed. """
 
     def _on_alert(self, duration=None):

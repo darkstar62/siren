@@ -23,7 +23,8 @@ class FS3T22A(Siren):
     def __repr__(self):
         return '<FS3T22A: Model Federal Signal 3T22A>'
 
-    def _on_test(self):
+    def _on_test(self, duration=None):
+        # Duration not used for test.
         self._on_alert()
 
     def _on_alert(self, duration=None):

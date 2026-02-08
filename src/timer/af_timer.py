@@ -229,7 +229,7 @@ class AFTimer:
                 elif button == Button.CANCEL:
                     self.change_mode(Mode.off_test())
 
-    def _run_in_thread(self, callable, duration):
+    def _run_in_thread(self, callable, duration=None):
         self.cancel()
 
         def wrapper():
