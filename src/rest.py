@@ -1,5 +1,5 @@
 """ REST-ful API for the Siren system. """
-from flask import current_app, Flask, jsonify
+from flask import current_app, Flask, jsonify, request
 
 PORT = 12346
 HOST = '0.0.0.0'
@@ -22,9 +22,13 @@ def run_rest(siren):
     def handle_activate_tone(tone):
         siren = current_app.config['SIREN']
         mappings = siren.generate_api_mappings()['tone']
+        duration = request.args.get('duration', None)
+        if duration is not None:
+            duration = int(duration)
+
         if tone not in mappings.keys():
             return jsonify({'error', f'Tone {tone} not valid'})
-        mappings[tone]()
+        mappings[tone](duration)
         return jsonify({})
 
     @app.route('/control', methods=['GET'])
@@ -65,9 +69,12 @@ def run_rest(siren):
     def handle_on():
         siren = current_app.config['SIREN']
         mappings = siren.generate_api_mappings()
+        duration = request.args.get('duration', None)
+        if duration is not None:
+            duration = int(duration)
         if 'on' not in mappings.keys():
             return jsonify({'error', f'/on not supported'})
-        mappings['on']()
+        mappings['on'](duration)
         return jsonify({})
 
     @app.route('/off', methods=['GET'])

@@ -26,12 +26,12 @@ class FS3T22A(Siren):
     def _on_test(self):
         self._on_alert()
 
-    def _on_alert(self):
+    def _on_alert(self, duration=None):
         self._motor.on()
-        self._wait_for_cancel()
+        self._wait_for_cancel(duration)
         self._off()
 
-    def _on_fire(self):
+    def _on_fire(self, duration=None):
         self._motor.on()
         while True:
             self._top_sol.off()
@@ -42,9 +42,13 @@ class FS3T22A(Siren):
             self._top_sol.on()
             if self._wait_for_cancel(0.5):
                 break
+            if duration is not None:
+                duration -= 1
+                if duration <= 0:
+                    break
         self._off()
 
-    def _on_fire_attack(self):
+    def _on_fire_attack(self, duration=None):
         motor_next = True
         cancelled = False
         while not cancelled:
@@ -66,16 +70,40 @@ class FS3T22A(Siren):
                 if self._wait_for_cancel(0.5):
                     cancelled = True
                     break
+                if duration is not None:
+                    duration -= 1
+                    if duration <= 0:
+                        cancelled = True
+                        break
         self._off()
 
-    def _on_attack(self):
-        while True:
+    def _on_attack(self, duration=None):
+        cancelled = False
+        while not cancelled:
             self._motor.on()
-            if self._wait_for_cancel(4):
-                break
+            for secs in range(4):
+                if self._wait_for_cancel(1):
+                    cancelled = True
+                    break
+                if duration is not None:
+                    duration -= 1
+                    if duration <= 0:
+                        cancelled = True
+                        break
+
             self._motor.off()
-            if self._wait_for_cancel(4):
+            if cancelled:
                 break
+
+            for secs in range(4):
+                if self._wait_for_cancel(1):
+                    cancelled = True
+                    break
+                if duration is not None:
+                    duration -= 1
+                    if duration <= 0:
+                        cancelled = True
+                        break
         self._off()
 
     def _set_damper_high(self, closed):

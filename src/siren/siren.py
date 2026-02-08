@@ -29,16 +29,16 @@ class Siren:
     def _on_test(self):
         """ Called when the "Test" button is pressed. """
 
-    def _on_alert(self):
+    def _on_alert(self, duration=None):
         """ Called when the "Alert" button is pressed. """
 
-    def _on_fire(self):
+    def _on_fire(self, duration=None):
         """ Called when the "Fire" button is pressed. """
 
-    def _on_fire_attack(self):
+    def _on_fire_attack(self, duration=None):
         """ Called when the "Fire" and "Attack" buttons are pressed. """
 
-    def _on_attack(self):
+    def _on_attack(self, duration=None):
         """ Called when the "Attack" button is pressed. """
 
     def _set_damper_high(self, closed):

@@ -229,33 +229,35 @@ class AFTimer:
                 elif button == Button.CANCEL:
                     self.change_mode(Mode.off_test())
 
-    def _run_in_thread(self, callable):
+    def _run_in_thread(self, callable, duration):
         self.cancel()
 
         def wrapper():
             self._led_alarm.on()
-            callable()
+            callable(duration)
             self._led_alarm.off()
+            self._thread = None
+            self.change_mode(Mode.idle())
 
         print("Run in thread: %s", callable.__repr__())
         self._thread = threading.Thread(target=wrapper)
         self._thread.start()
 
-    def change_mode(self, mode: Mode):
+    def change_mode(self, mode: Mode, duration=None):
         """ Change to the specified mode, actuating the siren accordingly. """
-        print("Change mode: ", mode, " from ", self._mode)
+        print(f"Change mode: {mode} from {self._mode} (duration: {duration})")
         if mode == Mode.idle():
             self.cancel()
         elif mode == Mode.off_test():
             self.cancel(Mode.off_test())
         elif mode == Mode.alert():
-            self.alert()
+            self.alert(duration)
         elif mode == Mode.fire():
-            self.fire()
+            self.fire(duration)
         elif mode == Mode.fire_attack():
-            self.fire_attack()
+            self.fire_attack(duration)
         elif mode == Mode.attack():
-            self.attack()
+            self.attack(duration)
         elif mode == Mode.test():
             self.test()
         elif mode == Mode.locked():
@@ -268,20 +270,20 @@ class AFTimer:
         self._run_in_thread(self._siren._on_test)
         self._mode = Mode.test()
 
-    def alert(self):
-        self._run_in_thread(self._siren._on_alert)
+    def alert(self, duration=None):
+        self._run_in_thread(self._siren._on_alert, duration)
         self._mode = Mode.alert()
 
-    def fire(self):
-        self._run_in_thread(self._siren._on_fire)
+    def fire(self, duration=None):
+        self._run_in_thread(self._siren._on_fire, duration)
         self._mode = Mode.fire()
 
-    def attack(self):
-        self._run_in_thread(self._siren._on_attack)
+    def attack(self, duration=None):
+        self._run_in_thread(self._siren._on_attack, duration)
         self._mode = Mode.attack()
 
-    def fire_attack(self):
-        self._run_in_thread(self._siren._on_fire_attack)
+    def fire_attack(self, duration=None):
+        self._run_in_thread(self._siren._on_fire_attack, duration)
         self._mode = Mode.fire_attack()
 
     def cancel(self, mode=None):
