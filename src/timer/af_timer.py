@@ -17,7 +17,7 @@ class Mode:
     FIRE_ATTACK = 5
     OFF_TEST = 6
     LOCKED = 7
-    
+
     def __init__(self, mode):
         self._mode = mode
 
@@ -33,14 +33,14 @@ class Mode:
             self.OFF_TEST : 'OFF_TEST'
         }
         return '<Mode "%s">' % mapping[self._mode]
-    
+
     def __eq__(self, o):
         return isinstance(o, self.__class__) and self._mode == o._mode
 
     @classmethod
     def idle(cls):
         return Mode(cls.IDLE)
-    
+
     @classmethod
     def test(cls):
         return Mode(cls.TEST)
@@ -52,11 +52,11 @@ class Mode:
     @classmethod
     def fire(cls):
         return Mode(cls.FIRE)
-    
+
     @classmethod
     def attack(cls):
         return Mode(cls.ATTACK)
-    
+
     @classmethod
     def fire_attack(cls):
         return Mode(cls.FIRE_ATTACK)
@@ -303,8 +303,30 @@ class AFTimer:
 
     def unlock(self):
         self.cancel(Mode.idle())
-        
+
     def generate_api_mappings(self):
+        mappings = {
+            'tone': {
+                'alert': functools.partial(self.change_mode, Mode.alert()),
+                'fire': functools.partial(self.change_mode, Mode.fire()),
+                'attack': functools.partial(self.change_mode, Mode.attack()),
+                'fire_attack': functools.partial(self.change_mode, Mode.fire_attack()),
+            },
+            'control': {
+                'lock': functools.partial(self.change_mode, Mode.locked()),
+                'unlock': functools.partial(self.change_mode, Mode.idle()),
+            },
+            'debug': {
+                'high': self._siren._set_damper_high,
+                'low': self._siren._set_damper_low,
+                'test': functools.partial(self.change_mode, Mode.test()),
+            },
+            'on': functools.partial(self.change_mode, Mode.alert()),
+            'off': functools.partial(self.change_mode, Mode.idle()),
+        }
+        return mappings
+
+    def generate_console_mappings(self):
         mappings = {
             'high': self._siren._set_damper_high,
             'low': self._siren._set_damper_low,

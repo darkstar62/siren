@@ -16,7 +16,7 @@ PORT = 12345
 
 
 def run_console(port, af_timer: AFTimer):
-    locals = af_timer.generate_api_mappings()
+    locals = af_timer.generate_console_mappings()
     locals.update({
         'Mode': Mode,
         'Button': Button,
