@@ -306,6 +306,9 @@ class AFTimer:
     def unlock(self):
         self.cancel(Mode.idle())
 
+    def is_on(self):
+        return self._mode != Mode.idle()
+
     def generate_api_mappings(self):
         mappings = {
             'tone': {
@@ -325,6 +328,7 @@ class AFTimer:
             },
             'on': functools.partial(self.change_mode, Mode.alert()),
             'off': functools.partial(self.change_mode, Mode.idle()),
+            'is_on': self.is_on,
         }
         return mappings
 

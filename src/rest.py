@@ -27,7 +27,7 @@ def run_rest(siren):
             duration = int(duration)
 
         if tone not in mappings.keys():
-            return jsonify({'error', f'Tone {tone} not valid'})
+            return jsonify({'error': f'Tone {tone} not valid'})
         mappings[tone](duration)
         return jsonify({})
 
@@ -44,7 +44,7 @@ def run_rest(siren):
         siren = current_app.config['SIREN']
         mappings = siren.generate_api_mappings()['control']
         if control not in mappings.keys():
-            return jsonify({'error', f'Control {control} not valid'})
+            return jsonify({'error': f'Control {control} not valid'})
         mappings[control]()
         return jsonify({})
 
@@ -61,7 +61,7 @@ def run_rest(siren):
         siren = current_app.config['SIREN']
         mappings = siren.generate_api_mappings()['debug']
         if debug not in mappings.keys():
-            return jsonify({'error', f'Debug {debug} not valid'})
+            return jsonify({'error': f'Debug {debug} not valid'})
         mappings[debug]()
         return jsonify({})
 
@@ -73,7 +73,7 @@ def run_rest(siren):
         if duration is not None:
             duration = int(duration)
         if 'on' not in mappings.keys():
-            return jsonify({'error', f'/on not supported'})
+            return jsonify({'error': f'/on not supported'})
         mappings['on'](duration)
         return jsonify({})
 
@@ -82,8 +82,16 @@ def run_rest(siren):
         siren = current_app.config['SIREN']
         mappings = siren.generate_api_mappings()
         if 'off' not in mappings.keys():
-            return jsonify({'error', f'/off not supported'})
+            return jsonify({'error': f'/off not supported'})
         mappings['off']()
         return jsonify({})
+
+    @app.route('/is_on', methods=['GET'])
+    def handle_is_on():
+        siren = current_app.config['SIREN']
+        mappings = siren.generate_api_mappings()
+        if 'is_on' not in mappings.keys():
+            return jsonify({'error': f'/is_on not supported'})
+        return jsonify({'on': mappings['is_on']()})
 
     app.run(host=HOST, port=PORT)
