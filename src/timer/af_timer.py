@@ -318,7 +318,7 @@ class AFTimer:
         self._handlers.remove(handler)
 
     def _emit_mode_change_event(self, new_mode):
-        event = {'is_on': new_mode != Mode.idle()}
+        event = {'is_on': self.is_on()}
         for handler in self._handlers:
             handler(event)
 

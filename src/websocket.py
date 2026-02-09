@@ -30,6 +30,7 @@ async def status_handler(af_timer, websocket):
             if request == 'get_tones':
                 response = {
                     'tones': list(api_mappings['tone'].keys()),
+                    'is_on': api_mappings['is_on'](),
                 }
                 await websocket.send(json.dumps(response))
             elif request == 'turn_on':
