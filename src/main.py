@@ -9,6 +9,8 @@ from timer.af_timer import AFTimer, Mode, Button
 
 import functools
 from threading import Thread
+import asyncio
+import websocket
 
 
 HOST = '0.0.0.0'
@@ -21,7 +23,7 @@ def run_console(port, af_timer: AFTimer):
         'Mode': Mode,
         'Button': Button,
     })
-    
+
     def thread(port, locals):
         while True:
             print("Starting new console")
@@ -32,7 +34,8 @@ def run_console(port, af_timer: AFTimer):
     console_thread.start()
     return console_thread
 
-if __name__ == "__main__":
+
+async def main():
     import argparse
     import functools
     parser = argparse.ArgumentParser(description="AF Timer main runtime.")
@@ -41,6 +44,10 @@ if __name__ == "__main__":
 
     af_timer = AFTimer(FS3T22A)
     console_thread = run_console(args.console_port, af_timer)
+    websocket_task = asyncio.create_task(websocket.run_websocket(af_timer))
 
-    run_rest(af_timer)
+    await websocket_task
     console_thread.join()
+
+if __name__ == "__main__":
+    asyncio.run(main())

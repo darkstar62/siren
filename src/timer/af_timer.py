@@ -81,6 +81,7 @@ class Button:
 class AFTimer:
     def __init__(self, siren_cls):
         self._mode = Mode.idle()
+        self._handlers = set()
 
         self._led_alarm = LED(ALERT_LED_GPIO)
         self._led_ready = LED(READY_LED_GPIO)
@@ -265,6 +266,7 @@ class AFTimer:
         else:
             print("Invalid mode: ", mode)
         print("Mode now ", self._mode)
+        self._emit_mode_change_event(self._mode)
 
     def test(self):
         self._run_in_thread(self._siren._on_test)
@@ -308,6 +310,17 @@ class AFTimer:
 
     def is_on(self):
         return self._mode != Mode.idle()
+
+    def add_event_handler(self, handler):
+        self._handlers.add(handler)
+
+    def remove_event_handler(self, handler):
+        self._handlers.remove(handler)
+
+    def _emit_mode_change_event(self, new_mode):
+        event = {'is_on': new_mode != Mode.idle()}
+        for handler in self._handlers:
+            handler(event)
 
     def generate_api_mappings(self):
         mappings = {
