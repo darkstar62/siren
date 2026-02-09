@@ -21,28 +21,32 @@ async def status_handler(af_timer, websocket):
     handler = functools.partial(post_event, websocket)
     af_timer.add_event_handler(handler)
 
-    async for data in websocket:
-        message = json.loads(data)
-        request = message.get('request', '')
-        response = {}
+    try:
+        async for data in websocket:
+            message = json.loads(data)
+            request = message.get('request', '')
+            response = {}
 
-        if request == 'get_tones':
-            response = {
-                'tones': list(api_mappings['tone'].keys()),
-            }
-            await websocket.send(json.dumps(response))
-        elif request == 'turn_on':
-            duration = message.get('duration', None)
-            api_mappings['on'](duration)
-        elif request == 'turn_off':
-            api_mappings['off']()
-        elif request == 'set_tone':
-            tone = message.get('tone', None)
-            duration = message.get('duration', None)
-            if tone not in api_mappings['tone']:
-                await websocket.send(
-                        json.dumps({'error': f'Invalid tone: {tone}'}))
-            api_mappings['tone'][tone](duration)
+            if request == 'get_tones':
+                response = {
+                    'tones': list(api_mappings['tone'].keys()),
+                }
+                await websocket.send(json.dumps(response))
+            elif request == 'turn_on':
+                duration = message.get('duration', None)
+                api_mappings['on'](duration)
+            elif request == 'turn_off':
+                api_mappings['off']()
+            elif request == 'set_tone':
+                tone = message.get('tone', None)
+                duration = message.get('duration', None)
+                if tone not in api_mappings['tone']:
+                    await websocket.send(
+                            json.dumps({'error': f'Invalid tone: {tone}'}))
+                api_mappings['tone'][tone](duration)
+    except websockets.exceptions.ConnectionClosedError as e:
+        # Pass this, we'll just close the connection.
+        print('Connection closed')
 
     af_timer.remove_event_handler(handler)
 
