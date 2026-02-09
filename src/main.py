@@ -4,7 +4,6 @@
 
 from console import Console
 from model.fs3t22a import FS3T22A
-from rest import run_rest
 from timer.af_timer import AFTimer, Mode, Button
 
 import functools
